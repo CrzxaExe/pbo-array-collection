@@ -16,9 +16,17 @@ interface IteratorInterface {
     public function next();
 }
 
+
 interface ListInterface extends CollectionInterface {
     public function get(int $index);
     public function set(int $index, $value);
+}
+
+interface LinkedListInterface extends ListInterface {
+    public function addFirst($item);
+    public function addLast($item);
+    public function removeFirst();
+    public function removeLast();
 }
 
 interface QueueInterface extends CollectionInterface {
@@ -121,6 +129,174 @@ class ArrayList implements ListInterface, IteratorInterface {
     }
 }
 
+class Node {
+    public $data;
+    public ?Node $next;
+
+    public function __construct($data, $next = null) {
+        $this->data = $data;
+        $this->next = $next;
+    }
+}
+
+class LinkedList implements LinkedListInterface {
+    private ?Node $head = null;
+    private int $size = 0;
+
+    /**
+     * Menambahkan data di awal
+     * @param item data yang akan ditambah
+     */
+    public function addFirst($item) {
+        $newNode = new Node($item, $this->head);
+        $this->head = $newNode;
+        $this->size++;
+    }
+
+    /**
+     * Menambahkan data di akhir
+     * @param item data yang akan ditambah
+     */
+    public function addLast($item) {
+        $newNode = new Node($item);
+
+        $this->size++;
+
+        if($this->head === null) {
+            $this->head = $newNode;
+            return;
+        }
+
+        $current = $this->head;
+        while ($current->next !== null) {
+            $current = $current->next;
+        }
+
+        $current->next = $newNode;
+    }
+
+
+    /**
+     * Menambahkan data di awal
+     * @param item data yang akan ditambah
+     */
+    public function add($item) {
+        $this->addLast($item);
+    }
+
+    /**
+     * Menghapus data di awal
+     */
+    public function removeFirst() {
+        if($this->head === null) return;
+
+        $this->head = $this->head->next;
+        $this->size--;
+    }
+    
+    /**
+     * Menghapus data di akhir
+     */
+    public function removeLast() {
+        if($this->head === null) return;
+        
+        $this->size--;
+
+        if($this->head->next === null) {
+            $this->head = null;
+            return;
+        }
+        
+        $current = $this->head;
+        while ($current->next->next !== null) {
+            $current = $current->next;
+        }
+        $current->next = null;
+    }
+
+    /**
+     * Menghapus data dari node
+     * @param item data yang akan dihapus
+     */
+    public function remove($item) {
+        if ($this->head === null) return;
+
+        if ($this->head->data === $item) {
+            $this->head = $this->head->next;
+            $this->size--;
+            return;
+        }
+
+        $current = $this->head;
+        while ($current->next !== null && $current->next->data !== $item) {
+            $current = $current->next;
+        }
+
+        if ($current->next === null) return;
+        $current->next = $current->next->next;
+        $this->size--;
+    }
+
+    /**
+     * Mencari data berdasarkan index
+     * @param index
+     */
+    public function get(int $index) {
+        if ($index < 0 || $index >= $this->size) return null;
+
+        $current = $this->head;
+        for ($i = 0; $i < $index; $i++) {
+            $current = $current->next;
+        }
+        return $current->data;
+    }
+
+    /**
+     * Mengubah data di index yang diinput
+     * @param index
+     * @param value data baru
+     */
+    public function set(int $index, $value) {
+        if ($index < 0 || $index >= $this->size) return;
+        $current = $this->head;
+        for ($i = 0; $i < $index; $i++) {
+            $current = $current->next;
+        }
+        $current->data = $value;
+    }
+
+    /**
+     * Mengembalikan panjang Linkedlist
+     * @return int
+     */
+    public function size(): int {
+        return $this->size;
+    }
+
+    /**
+     * Mengecek apakah LinkedList kosong
+     * @return bool true jika kosong
+     */
+    public function isEmpty(): bool {
+        return $this->size === 0;
+    }
+
+    public function print() {
+        if($this->head === null) {
+            echo "LinkedList Kosong";
+            return;
+        }
+
+        echo "LinkedList: ";
+        $current = $this->head;
+        while ($current !== null) {
+            echo "{$current->data} ";
+            $current = $current->next;
+        }
+        echo "\n";
+    }
+}
+
 class Stack extends ArrayList {
     /**
      * Memasukan data ke Stack
@@ -145,7 +321,6 @@ class Stack extends ArrayList {
     public function peek() {
         return end($this->items);
     }
-
 }
 
 class Queue implements QueueInterface {
@@ -259,7 +434,7 @@ class HashMap implements MapInterface {
     }
 
     /**
-     * Menampilkan ArrayList
+     * Menampilkan Map
      */
     public function print() {
         print_r($this->map);

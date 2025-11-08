@@ -29,9 +29,27 @@ $arrList->print();
 $arrList->remove(6);
 $arrList->print();
 
-// Linkedlist sebenarnya hampir sama dengan ArrayList
+echo "\nLinkedList\n";
 
-echo "\nStack\n";
+// LinkedList
+// Hampir mirip dengan ArrayList, hanya cara menyimpannya saja yang berbeda
+// Menggunakan node yang saling terhubung
+$linkList = new LinkedList();
+
+// Menambahkan data ke LinkedList
+$linkList->addLast(5);
+$linkList->addLast(7);
+$linkList->addLast(9);
+$linkList->addLast(12);
+
+$linkList->print();
+
+// Menghapus data di LinkeList
+$linkList->remove(7);
+$linkList->removeFirst();
+$linkList->print();
+
+echo "\n\nStack\n";
 // Stack (Tumpukan)
 // Memiliki konsep LIFO, dimana elemen atau data terakhir yang di input maka dialah
 // yang pertama keluar
